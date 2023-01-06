@@ -26,11 +26,12 @@ public class ScheduleController
         [Required] [FromBody]
         CreateScheduleBlock request) => await _mediator.Send(request);
     
+    [HttpPut("/api/schedule/blocks/update")]
+    public async Task<Either<BaseError, UpdateScheduleBlockResult>> UpdateOne(
+        [Required] [FromBody]
+        UpdateScheduleBlock request) => await _mediator.Send(request);
+
     [HttpGet("/api/schedule/blocks/{id}")]
     public async Task<Option<ScheduleBlockResponseModel>> GetOne(int id) =>
         await _mediator.Send(new GetScheduleBlockByIdForApi(id));
-
-    // [HttpGet("/api/schedule/blocks/{id}")]
-    // public async Task<Option<ScheduleBlockResponseModel>> GetOne(int id) =>
-    //     await _mediator.Send(new GetScheduleBlockByIdForApi(id));
 }
