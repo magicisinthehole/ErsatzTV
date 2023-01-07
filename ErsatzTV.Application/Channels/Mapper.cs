@@ -1,5 +1,6 @@
 ﻿using ErsatzTV.Core.Api.Channels;
 using ErsatzTV.Core.Domain;
+using ErsatzTV.Core.Domain.Scheduling;
 
 namespace ErsatzTV.Application.Channels;
 
@@ -32,7 +33,16 @@ internal static class Mapper
             channel.Name,
             channel.FFmpegProfile.Name,
             channel.PreferredAudioLanguageCode,
-            GetStreamingMode(channel));
+            GetStreamingMode(channel),
+            channel.ChannelScheduleDayTemplates.Map(ProjectToResponseModel).ToList());
+
+    internal static ChannelScheduleDayTemplateResponseModel ProjectToResponseModel(
+        ChannelScheduleDayTemplate channelScheduleDayTemplate) =>
+        new(
+            channelScheduleDayTemplate.ScheduleDayTemplate.Name,
+            channelScheduleDayTemplate.DaysOfWeek,
+            channelScheduleDayTemplate.DaysOfMonth,
+            channelScheduleDayTemplate.MonthsOfYear);
 
     private static string GetLogo(Channel channel) =>
         Optional(channel.Artwork.FirstOrDefault(a => a.ArtworkKind == ArtworkKind.Logo))

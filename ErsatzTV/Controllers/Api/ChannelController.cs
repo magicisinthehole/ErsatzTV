@@ -13,5 +13,10 @@ public class ChannelController
     public ChannelController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet("/api/channels")]
-    public async Task<List<ChannelResponseModel>> GetAll() => await _mediator.Send(new GetAllChannelsForApi());
+    public async Task<List<ChannelResponseModel>> GetAll() =>
+        await _mediator.Send(new GetAllChannelsForApi());
+
+    [HttpGet("/api/channels/{id:int}")]
+    public async Task<Option<ChannelResponseModel>> GetOne(int id) =>
+        await _mediator.Send(new GetChannelByIdForApi(id));
 }

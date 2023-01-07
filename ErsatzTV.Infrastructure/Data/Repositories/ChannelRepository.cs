@@ -13,10 +13,13 @@ public class ChannelRepository : IChannelRepository
 
     public async Task<Option<Channel>> Get(int id)
     {
-        await using TvContext dbContext = _dbContextFactory.CreateDbContext();
+        await using TvContext dbContext = await _dbContextFactory.CreateDbContextAsync();
         return await dbContext.Channels
+            .Include(c => c.FFmpegProfile)
             .Include(c => c.Artwork)
             .Include(c => c.Watermark)
+            .Include(c => c.ChannelScheduleDayTemplates)
+            .ThenInclude(t => t.ScheduleDayTemplate)
             .OrderBy(c => c.Id)
             .SingleOrDefaultAsync(c => c.Id == id)
             .Map(Optional);
@@ -24,7 +27,7 @@ public class ChannelRepository : IChannelRepository
 
     public async Task<Option<Channel>> GetByNumber(string number)
     {
-        await using TvContext dbContext = _dbContextFactory.CreateDbContext();
+        await using TvContext dbContext = await _dbContextFactory.CreateDbContextAsync();
         return await dbContext.Channels
             .Include(c => c.FFmpegProfile)
             .ThenInclude(p => p.Resolution)
@@ -42,12 +45,14 @@ public class ChannelRepository : IChannelRepository
             .Include(c => c.FFmpegProfile)
             .Include(c => c.Artwork)
             .Include(c => c.Playouts)
+            .Include(c => c.ChannelScheduleDayTemplates)
+            .ThenInclude(t => t.ScheduleDayTemplate)
             .ToListAsync();
     }
 
     public async Task<List<Channel>> GetAllForGuide()
     {
-        await using TvContext dbContext = _dbContextFactory.CreateDbContext();
+        await using TvContext dbContext = await _dbContextFactory.CreateDbContextAsync();
         return await dbContext.Channels
             .Include(c => c.Artwork)
             .Include(c => c.Playouts)
@@ -109,9 +114,12 @@ public class ChannelRepository : IChannelRepository
 
     public async Task Delete(int channelId)
     {
-        await using TvContext dbContext = _dbContextFactory.CreateDbContext();
+        await using TvContext dbContext = await _dbContextFactory.CreateDbContextAsync();
         Channel channel = await dbContext.Channels.FindAsync(channelId);
-        dbContext.Channels.Remove(channel);
-        await dbContext.SaveChangesAsync();
+        if (channel is not null)
+        {
+            dbContext.Channels.Remove(channel);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
