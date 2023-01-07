@@ -18,7 +18,7 @@ public class ScheduleController
     }
 
     [HttpGet("/api/schedule/blocks")]
-    public async Task<List<ScheduleBlockResponseModel>> GetAll() =>
+    public async Task<List<ScheduleBlockResponseModel>> GetAllBlocks() =>
         await _mediator.Send(new GetAllScheduleBlocksForApi());
 
     [HttpPost("/api/schedule/blocks/new")]
@@ -34,4 +34,8 @@ public class ScheduleController
     [HttpGet("/api/schedule/blocks/{id}")]
     public async Task<Option<ScheduleBlockResponseModel>> GetOne(int id) =>
         await _mediator.Send(new GetScheduleBlockByIdForApi(id));
+
+    [HttpGet("/api/schedule/day-templates")]
+    public async Task<List<ScheduleDayTemplateResponseModel>> GetAllDayTemplates() =>
+        await _mediator.Send(new GetAllScheduleDayTemplatesForApi());
 }

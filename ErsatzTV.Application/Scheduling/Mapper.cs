@@ -19,4 +19,18 @@ internal static class Mapper
             scheduleBlockItem.Query,
             scheduleBlockItem.PlayoutMode,
             scheduleBlockItem.PlaybackOrder);
+
+    internal static ScheduleDayTemplateResponseModel ProjectToResponseModel(ScheduleDayTemplate scheduleDayTemplate) =>
+        new(
+            scheduleDayTemplate.Id,
+            scheduleDayTemplate.Name,
+            scheduleDayTemplate.Items.Map(ProjectToResponseModel).ToList());
+
+    internal static ScheduleDayTemplateItemResponseModel ProjectToResponseModel(
+        ScheduleDayTemplateItem scheduleDayTemplateItem) =>
+        new(
+            scheduleDayTemplateItem.Index,
+            scheduleDayTemplateItem.StartTime,
+            scheduleDayTemplateItem.ScheduleBlockId,
+            scheduleDayTemplateItem.ScheduleBlock.Name);
 }

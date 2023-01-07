@@ -85,6 +85,7 @@ public class TvContext : DbContext
     public DbSet<TraktList> TraktLists { get; set; }
     public DbSet<FillerPreset> FillerPresets { get; set; }
     public DbSet<ScheduleBlock> ScheduleBlocks { get; set; }
+    public DbSet<ScheduleDayTemplate> ScheduleDayTemplates { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.UseLoggerFactory(_loggerFactory);
