@@ -1,4 +1,5 @@
 ﻿using ErsatzTV.Core.Domain.Filler;
+using ErsatzTV.Core.Domain.Scheduling;
 
 namespace ErsatzTV.Core.Domain;
 
@@ -28,4 +29,6 @@ public class Channel
     public ChannelSubtitleMode SubtitleMode { get; set; }
     public ChannelMusicVideoCreditsMode MusicVideoCreditsMode { get; set; }
     public string MusicVideoCreditsTemplate { get; set; }
+    public List<ScheduleDayTemplate> ScheduleDayTemplates { get; set; }
+    public List<ChannelScheduleDayTemplate> ChannelScheduleDayTemplates { get; set; }
 }

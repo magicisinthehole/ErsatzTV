@@ -1,4 +1,5 @@
 ﻿using ErsatzTV.Core.Domain;
+using ErsatzTV.Core.Domain.Scheduling;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,5 +38,18 @@ public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
         builder.Property(c => c.Group)
             .IsRequired()
             .HasDefaultValue("ErsatzTV");
+
+        builder.HasMany(c => c.ScheduleDayTemplates)
+            .WithMany(dt => dt.Channels)
+            .UsingEntity<ChannelScheduleDayTemplate>(
+                j => j.HasOne(i => i.ScheduleDayTemplate)
+                    .WithMany(i => i.ChannelScheduleDayTemplates)
+                    .HasForeignKey(i => i.ScheduleDayTemplateId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne(i => i.Channel)
+                    .WithMany(i => i.ChannelScheduleDayTemplates)
+                    .HasForeignKey(i => i.ChannelId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j.HasKey(i => new { i.ChannelId, i.ScheduleDayTemplateId }));
     }
 }
