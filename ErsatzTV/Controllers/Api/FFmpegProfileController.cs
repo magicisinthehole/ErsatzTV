@@ -28,10 +28,10 @@ public class FFmpegProfileController
         [Required] [FromBody]
         UpdateFFmpegProfile request) => await _mediator.Send(request);
 
-    [HttpGet("/api/ffmpeg/profiles/{id}")]
+    [HttpGet("/api/ffmpeg/profiles/{id:int}")]
     public async Task<Option<FFmpegFullProfileResponseModel>> GetOne(int id) =>
         await _mediator.Send(new GetFFmpegFullProfileByIdForApi(id));
 
-    [HttpDelete("/api/ffmpeg/delete/{id}")]
+    [HttpDelete("/api/ffmpeg/delete/{id:int}")]
     public async Task DeleteProfileAsync(int id) => await _mediator.Send(new DeleteFFmpegProfile(id));
 }

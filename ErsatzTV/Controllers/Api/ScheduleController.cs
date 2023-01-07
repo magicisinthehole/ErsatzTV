@@ -31,7 +31,7 @@ public class ScheduleController
         [Required] [FromBody]
         UpdateScheduleBlock request) => await _mediator.Send(request);
 
-    [HttpGet("/api/schedule/blocks/{id}")]
+    [HttpGet("/api/schedule/blocks/{id:int}")]
     public async Task<Option<ScheduleBlockResponseModel>> GetOneBlock(int id) =>
         await _mediator.Send(new GetScheduleBlockByIdForApi(id));
 
@@ -44,7 +44,7 @@ public class ScheduleController
         [Required] [FromBody]
         CreateScheduleDayTemplate request) => await _mediator.Send(request);
 
-    [HttpGet("/api/schedule/day-templates/{id}")]
+    [HttpGet("/api/schedule/day-templates/{id:int}")]
     public async Task<Option<ScheduleDayTemplateResponseModel>> GetOneDayTemplate(int id) =>
         await _mediator.Send(new GetScheduleDayTemplateByIdForApi(id));
 

@@ -39,6 +39,7 @@ internal static class Mapper
     internal static ChannelScheduleDayTemplateResponseModel ProjectToResponseModel(
         ChannelScheduleDayTemplate channelScheduleDayTemplate) =>
         new(
+            channelScheduleDayTemplate.Index,
             channelScheduleDayTemplate.ScheduleDayTemplate.Name,
             channelScheduleDayTemplate.DaysOfWeek,
             channelScheduleDayTemplate.DaysOfMonth,
