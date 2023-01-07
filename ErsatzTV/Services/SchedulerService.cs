@@ -13,6 +13,7 @@ using ErsatzTV.Core.Interfaces.Locking;
 using ErsatzTV.Core.Scheduling;
 using ErsatzTV.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Channel = ErsatzTV.Core.Domain.Channel;
 
 namespace ErsatzTV.Services;
 
@@ -180,6 +181,17 @@ public class SchedulerService : BackgroundService
         {
             await _workerChannel.WriteAsync(
                 new BuildPlayout(playoutId, PlayoutBuildMode.Continue),
+                cancellationToken);
+        }
+        
+        List<Channel> channels = await dbContext.Channels
+            .Filter(c => c.Playouts.Count == 0 && c.ChannelScheduleDayTemplates.Count > 0)
+            .ToListAsync(cancellationToken);
+
+        foreach (Channel channel in channels.OrderBy(c => c.Number))
+        {
+            await _workerChannel.WriteAsync(
+                new BuildChannelPlayout(channel.Id, PlayoutBuildMode.Continue),
                 cancellationToken);
         }
     }

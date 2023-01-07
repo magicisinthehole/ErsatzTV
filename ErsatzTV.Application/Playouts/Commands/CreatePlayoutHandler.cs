@@ -40,14 +40,12 @@ public class CreatePlayoutHandler : IRequestHandler<CreatePlayout, Either<BaseEr
     }
 
     private async Task<Validation<BaseError, Playout>> Validate(TvContext dbContext, CreatePlayout request) =>
-        (await ValidateChannel(dbContext, request), await ValidateProgramSchedule(dbContext, request),
-            ValidatePlayoutType(request))
+        (await ValidateChannel(dbContext, request), await ValidateProgramSchedule(dbContext, request))
         .Apply(
-            (channel, programSchedule, playoutType) => new Playout
+            (channel, programSchedule) => new Playout
             {
                 ChannelId = channel.Id,
-                ProgramScheduleId = programSchedule.Id,
-                ProgramSchedulePlayoutType = playoutType
+                ProgramScheduleId = programSchedule.Id
             });
 
     private static Task<Validation<BaseError, Channel>> ValidateChannel(
@@ -79,10 +77,4 @@ public class CreatePlayoutHandler : IRequestHandler<CreatePlayout, Either<BaseEr
         Optional(programSchedule)
             .Filter(ps => ps.Items.Any())
             .ToValidation<BaseError>("Program schedule must have items");
-
-    private static Validation<BaseError, ProgramSchedulePlayoutType> ValidatePlayoutType(
-        CreatePlayout createPlayout) =>
-        Optional(createPlayout.ProgramSchedulePlayoutType)
-            .Filter(playoutType => playoutType != ProgramSchedulePlayoutType.None)
-            .ToValidation<BaseError>("[ProgramSchedulePlayoutType] must not be None");
 }

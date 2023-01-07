@@ -7,7 +7,6 @@ public class Playout
     public Channel Channel { get; set; }
     public int ProgramScheduleId { get; set; }
     public ProgramSchedule ProgramSchedule { get; set; }
-    public ProgramSchedulePlayoutType ProgramSchedulePlayoutType { get; set; }
     public List<PlayoutItem> Items { get; set; }
     public PlayoutAnchor Anchor { get; set; }
     public List<PlayoutProgramScheduleAnchor> ProgramScheduleAnchors { get; set; }

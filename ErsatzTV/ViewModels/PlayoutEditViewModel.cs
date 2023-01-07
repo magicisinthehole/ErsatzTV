@@ -10,6 +10,5 @@ public class PlayoutEditViewModel
     public ChannelViewModel Channel { get; set; }
     public ProgramScheduleViewModel ProgramSchedule { get; set; }
 
-    public CreatePlayout ToCreate() =>
-        new(Channel.Id, ProgramSchedule.Id, ProgramSchedulePlayoutType.Flood);
+    public CreatePlayout ToCreate() => new(Channel.Id, ProgramSchedule.Id);
 }
