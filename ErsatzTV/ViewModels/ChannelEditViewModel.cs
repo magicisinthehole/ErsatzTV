@@ -30,7 +30,7 @@ public class ChannelEditViewModel
         set => _musicVideoCreditsTemplate = value;
     }
 
-    public UpdateChannel ToUpdate() =>
+    public UpdateChannelLegacy ToUpdate() =>
         new(
             Id,
             Name,

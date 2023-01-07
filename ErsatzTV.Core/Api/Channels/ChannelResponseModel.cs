@@ -1,5 +1,4 @@
-﻿using ErsatzTV.Core.Domain.Scheduling;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace ErsatzTV.Core.Api.Channels;
 
@@ -7,8 +6,10 @@ public record ChannelResponseModel(
     int Id,
     string Number,
     string Name,
+    [property: JsonProperty("ffmpegProfileId")]
+    int FFmpegProfileId,
     [property: JsonProperty("ffmpegProfile")]
     string FFmpegProfile,
     string Language,
     string StreamingMode,
-    List<ChannelScheduleDayTemplateResponseModel> ScheduleDayTemplates);
+    List<ChannelScheduleDayTemplateResponseModel> ChannelScheduleDayTemplates);

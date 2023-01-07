@@ -31,6 +31,7 @@ internal static class Mapper
             channel.Id,
             channel.Number,
             channel.Name,
+            channel.FFmpegProfileId,
             channel.FFmpegProfile.Name,
             channel.PreferredAudioLanguageCode,
             GetStreamingMode(channel),

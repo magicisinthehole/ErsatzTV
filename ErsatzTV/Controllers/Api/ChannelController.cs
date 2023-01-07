@@ -1,4 +1,6 @@
-﻿using ErsatzTV.Application.Channels;
+﻿using System.ComponentModel.DataAnnotations;
+using ErsatzTV.Application.Channels;
+using ErsatzTV.Core;
 using ErsatzTV.Core.Api.Channels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -19,4 +21,9 @@ public class ChannelController
     [HttpGet("/api/channels/{id:int}")]
     public async Task<Option<ChannelResponseModel>> GetOne(int id) =>
         await _mediator.Send(new GetChannelByIdForApi(id));
+
+    [HttpPut("/api/channels/update")]
+    public async Task<Either<BaseError, UpdateChannelResult>> UpdateOneBlock(
+        [Required] [FromBody]
+        UpdateChannel request) => await _mediator.Send(request);
 }
