@@ -6,20 +6,20 @@ using static ErsatzTV.Application.Scheduling.Mapper;
 
 namespace ErsatzTV.Application.Scheduling;
 
-public class
-    GetScheduleBlockByIdForApiHandler : IRequestHandler<GetScheduleBlockByIdForApi, Option<ScheduleBlockResponseModel>>
+public class GetScheduleDayTemplateByIdForApiHandler : IRequestHandler<GetScheduleDayTemplateByIdForApi,
+    Option<ScheduleDayTemplateResponseModel>>
 {
     private readonly IDbContextFactory<TvContext> _dbContextFactory;
 
-    public GetScheduleBlockByIdForApiHandler(IDbContextFactory<TvContext> dbContextFactory) =>
+    public GetScheduleDayTemplateByIdForApiHandler(IDbContextFactory<TvContext> dbContextFactory) =>
         _dbContextFactory = dbContextFactory;
 
-    public async Task<Option<ScheduleBlockResponseModel>> Handle(
-        GetScheduleBlockByIdForApi request,
+    public async Task<Option<ScheduleDayTemplateResponseModel>> Handle(
+        GetScheduleDayTemplateByIdForApi request,
         CancellationToken cancellationToken)
     {
         await using TvContext dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        return await dbContext.ScheduleBlocks
+        return await dbContext.ScheduleDayTemplates
             .AsNoTracking()
             .Include(sb => sb.Items)
             .SelectOneAsync(p => p.Id, p => p.Id == request.Id)
