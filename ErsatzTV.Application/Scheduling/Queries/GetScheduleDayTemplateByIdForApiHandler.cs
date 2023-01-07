@@ -22,6 +22,7 @@ public class GetScheduleDayTemplateByIdForApiHandler : IRequestHandler<GetSchedu
         return await dbContext.ScheduleDayTemplates
             .AsNoTracking()
             .Include(sb => sb.Items)
+            .ThenInclude(sb => sb.ScheduleBlock)
             .SelectOneAsync(p => p.Id, p => p.Id == request.Id)
             .MapT(ProjectToResponseModel);
     }

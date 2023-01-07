@@ -22,12 +22,12 @@ public class ScheduleController
         await _mediator.Send(new GetAllScheduleBlocksForApi());
 
     [HttpPost("/api/schedule/blocks/new")]
-    public async Task<Either<BaseError, CreateScheduleBlockResult>> AddOne(
+    public async Task<Either<BaseError, CreateScheduleBlockResult>> AddOneBlock(
         [Required] [FromBody]
         CreateScheduleBlock request) => await _mediator.Send(request);
     
     [HttpPut("/api/schedule/blocks/update")]
-    public async Task<Either<BaseError, UpdateScheduleBlockResult>> UpdateOne(
+    public async Task<Either<BaseError, UpdateScheduleBlockResult>> UpdateOneBlock(
         [Required] [FromBody]
         UpdateScheduleBlock request) => await _mediator.Send(request);
 
@@ -38,7 +38,12 @@ public class ScheduleController
     [HttpGet("/api/schedule/day-templates")]
     public async Task<List<ScheduleDayTemplateResponseModel>> GetAllDayTemplates() =>
         await _mediator.Send(new GetAllScheduleDayTemplatesForApi());
-    
+
+    [HttpPost("/api/schedule/day-templates/new")]
+    public async Task<Either<BaseError, CreateScheduleDayTemplateResult>> AddOneDayTemplate(
+        [Required] [FromBody]
+        CreateScheduleDayTemplate request) => await _mediator.Send(request);
+
     [HttpGet("/api/schedule/day-templates/{id}")]
     public async Task<Option<ScheduleDayTemplateResponseModel>> GetOneDayTemplate(int id) =>
         await _mediator.Send(new GetScheduleDayTemplateByIdForApi(id));
