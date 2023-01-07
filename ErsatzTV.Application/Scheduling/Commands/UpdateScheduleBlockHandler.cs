@@ -29,9 +29,10 @@ public class
         UpdateScheduleBlock update)
     {
         sb.Name = update.Name;
-        
+
         ScheduleBlockItem[] existing = sb.Items.ToArray();
-        UpdateScheduleBlockItem[] toAdd = update.Items.Filter(item => existing.All(l => l.Index != item.Index)).ToArray();
+        UpdateScheduleBlockItem[] toAdd = update.Items.Filter(item => existing.All(l => l.Index != item.Index))
+            .ToArray();
         ScheduleBlockItem[] toRemove = existing.Filter(item => update.Items.All(l => l.Index != item.Index)).ToArray();
         UpdateScheduleBlockItem[] toUpdate = update.Items
             .Filter(l => toAdd.All(a => a.Index != l.Index) && toRemove.All(r => r.Index != l.Index)).ToArray();
@@ -50,7 +51,7 @@ public class
                     PlaybackOrder = item.PlaybackOrder
                 });
         }
-        
+
         foreach (UpdateScheduleBlockItem item in toUpdate)
         {
             foreach (ScheduleBlockItem target in sb.Items.Filter(i => i.Index == item.Index))

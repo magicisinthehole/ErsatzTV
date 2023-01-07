@@ -25,7 +25,7 @@ public class ScheduleController
     public async Task<Either<BaseError, CreateScheduleBlockResult>> AddOneBlock(
         [Required] [FromBody]
         CreateScheduleBlock request) => await _mediator.Send(request);
-    
+
     [HttpPut("/api/schedule/blocks/update")]
     public async Task<Either<BaseError, UpdateScheduleBlockResult>> UpdateOneBlock(
         [Required] [FromBody]
@@ -47,4 +47,9 @@ public class ScheduleController
     [HttpGet("/api/schedule/day-templates/{id}")]
     public async Task<Option<ScheduleDayTemplateResponseModel>> GetOneDayTemplate(int id) =>
         await _mediator.Send(new GetScheduleDayTemplateByIdForApi(id));
+
+    [HttpPut("/api/schedule/day-templates/update")]
+    public async Task<Either<BaseError, UpdateScheduleDayTemplateResult>> UpdateOneDayTemplate(
+        [Required] [FromBody]
+        UpdateScheduleDayTemplate request) => await _mediator.Send(request);
 }
