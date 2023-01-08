@@ -6,7 +6,7 @@ public class ScheduleBlockItem
     public int Index { get; set; }
     public string Name { get; set; }
     public string Query { get; set; }
-    // public ScheduleBlockItemGuideMode GuideMode { get; set; }
+    // public ScheduleBlockItemContentType ContentType { get; set; }
     // public string CustomTitle { get; set; }
     public PlayoutMode PlayoutMode { get; set; }
     public PlaybackOrder PlaybackOrder { get; set; }
