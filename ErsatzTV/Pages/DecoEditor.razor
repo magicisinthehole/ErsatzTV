@@ -199,82 +199,103 @@
                 </MudSelect>
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.Collection)
                 {
-                <MudSelect Class="mt-3"
-                           T="MediaCollectionViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Collection"
-                           @bind-value="_deco.DeadAirFallbackCollection">
-                    @foreach (MediaCollectionViewModel collection in _mediaCollections)
-                    {
-                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="MediaCollectionViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Collection"
+                               @bind-value="_deco.DeadAirFallbackCollection">
+                        @foreach (MediaCollectionViewModel collection in _mediaCollections)
+                        {
+                            <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.MultiCollection)
                 {
-                <MudSelect Class="mt-3"
-                           T="MultiCollectionViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Multi Collection"
-                           @bind-value="_deco.DeadAirFallbackMultiCollection">
-                    @foreach (MultiCollectionViewModel collection in _multiCollections)
-                    {
-                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="MultiCollectionViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Multi Collection"
+                               @bind-value="_deco.DeadAirFallbackMultiCollection">
+                        @foreach (MultiCollectionViewModel collection in _multiCollections)
+                        {
+                            <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.SmartCollection)
                 {
-                <MudSelect Class="mt-3"
-                           T="SmartCollectionViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Smart Collection"
-                           @bind-value="_deco.DeadAirFallbackSmartCollection">
-                    @foreach (SmartCollectionViewModel collection in _smartCollections)
-                    {
-                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="SmartCollectionViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Smart Collection"
+                               @bind-value="_deco.DeadAirFallbackSmartCollection">
+                        @foreach (SmartCollectionViewModel collection in _smartCollections)
+                        {
+                            <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.TelevisionShow)
                 {
-                <MudSelect Class="mt-3"
-                           T="NamedMediaItemViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Television Show"
-                           @bind-value="_deco.DeadAirFallbackMediaItem">
-                    @foreach (NamedMediaItemViewModel show in _televisionShows)
-                    {
-                    <MudSelectItem Value="@show">@show.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="NamedMediaItemViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Television Show"
+                               @bind-value="_deco.DeadAirFallbackMediaItem">
+                        @foreach (NamedMediaItemViewModel show in _televisionShows)
+                        {
+                            <MudSelectItem Value="@show">@show.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.TelevisionSeason)
                 {
-                <MudSelect Class="mt-3"
-                           T="NamedMediaItemViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Television Season"
-                           @bind-value="_deco.DeadAirFallbackMediaItem">
-                    @foreach (NamedMediaItemViewModel season in _televisionSeasons)
-                    {
-                    <MudSelectItem Value="@season">@season.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="NamedMediaItemViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Television Season"
+                               @bind-value="_deco.DeadAirFallbackMediaItem">
+                        @foreach (NamedMediaItemViewModel season in _televisionSeasons)
+                        {
+                            <MudSelectItem Value="@season">@season.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 @if (_deco.DeadAirFallbackCollectionType == ProgramScheduleItemCollectionType.Artist)
                 {
-                <MudSelect Class="mt-3"
-                           T="NamedMediaItemViewModel"
-                           Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
-                           Label="Artist"
-                           @bind-value="_deco.DeadAirFallbackMediaItem">
-                    @foreach (NamedMediaItemViewModel artist in _artists)
-                    {
-                    <MudSelectItem Value="@artist">@artist.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudSelect Class="mt-3"
+                               T="NamedMediaItemViewModel"
+                               Disabled="@(_deco.DeadAirFallbackMode != DecoMode.Override)"
+                               Label="Artist"
+                               @bind-value="_deco.DeadAirFallbackMediaItem">
+                        @foreach (NamedMediaItemViewModel artist in _artists)
+                        {
+                            <MudSelectItem Value="@artist">@artist.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
+            </MudCardContent>
+        </MudCard>
+        <MudCard class="mb-6" Style="width: 350px">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudTooltip Style="max-width: 350px">
+                        <ChildContent>
+                            <MudText Typo="Typo.h6">Break Content</MudText>
+                        </ChildContent>
+                        <TooltipContent>
+                            <MudText Typo="Typo.body2">This content will be used to pad blocks to their full duration.</MudText>
+                        </TooltipContent>
+                    </MudTooltip>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudSelect Label="Break Content Mode" @bind-Value="_deco.BreakContentMode" For="@(() => _deco.BreakContentMode)">
+                    <MudSelectItem Value="DecoMode.Inherit">Inherit</MudSelectItem>
+                    <MudSelectItem Value="DecoMode.Disable">Disable</MudSelectItem>
+                    <MudSelectItem Value="DecoMode.Override">Override</MudSelectItem>
+                </MudSelect>
             </MudCardContent>
         </MudCard>
     </MudStack>

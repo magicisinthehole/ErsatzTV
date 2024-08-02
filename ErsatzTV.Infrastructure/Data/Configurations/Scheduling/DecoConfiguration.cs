@@ -48,5 +48,10 @@ public class DecoConfiguration : IEntityTypeConfiguration<Deco>
             .HasForeignKey(d => d.DeadAirFallbackSmartCollectionId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired(false);
+
+        builder.HasMany(d => d.BreakContent)
+            .WithOne(bc => bc.Deco)
+            .HasForeignKey(bc => bc.DecoId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
