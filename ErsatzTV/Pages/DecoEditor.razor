@@ -12,9 +12,9 @@
 @inject ISnackbar Snackbar
 @inject IMediator Mediator
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-8" Style="display: flex; flex-direction: row">
-    <MudStack Class="mr-6">
-        <MudText Typo="Typo.h4" Class="mb-4">Edit Deco</MudText>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-8">
+    <MudText Typo="Typo.h4" Class="mb-4">Edit Deco</MudText>
+    <MudStack Class="mt-4" Wrap="Wrap.Wrap" Row="true" Spacing="6">
         <MudCard Class="mb-6" Style="width: 350px">
             <MudCardContent>
                 <MudTextField Label="Name" @bind-Value="_deco.Name" For="@(() => _deco.Name)"/>
@@ -25,6 +25,7 @@
                 </MudButton>
             </MudCardActions>
         </MudCard>
+        <MudFlexBreak />
         <MudCard Class="mb-6" Style="width: 350px">
             <MudCardHeader>
                 <CardHeaderContent>
@@ -277,6 +278,7 @@
                 }
             </MudCardContent>
         </MudCard>
+        <MudFlexBreak />
         <MudCard class="mb-6" Style="width: 350px">
             <MudCardHeader>
                 <CardHeaderContent>
@@ -296,6 +298,95 @@
                     <MudSelectItem Value="DecoMode.Disable">Disable</MudSelectItem>
                     <MudSelectItem Value="DecoMode.Override">Override</MudSelectItem>
                 </MudSelect>
+                <MudSelect Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Break Content Collection Type"
+                           @bind-Value="_selectedBreakContent.CollectionType"
+                           For="@(() => _selectedBreakContent.CollectionType)">
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.Collection">Collection</MudSelectItem>
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.TelevisionShow">Television Show</MudSelectItem>
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.TelevisionSeason">Television Season</MudSelectItem>
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.Artist">Artist</MudSelectItem>
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.MultiCollection">Multi Collection</MudSelectItem>
+                    <MudSelectItem Value="ProgramScheduleItemCollectionType.SmartCollection">Smart Collection</MudSelectItem>
+                </MudSelect>
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.Collection)
+                {
+                <MudSelect Class="mt-3"
+                           T="MediaCollectionViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Collection"
+                           @bind-value="_selectedBreakContent.Collection">
+                    @foreach (MediaCollectionViewModel collection in _mediaCollections)
+                    {
+                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.MultiCollection)
+                {
+                <MudSelect Class="mt-3"
+                           T="MultiCollectionViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Multi Collection"
+                           @bind-value="_selectedBreakContent.MultiCollection">
+                    @foreach (MultiCollectionViewModel collection in _multiCollections)
+                    {
+                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.SmartCollection)
+                {
+                <MudSelect Class="mt-3"
+                           T="SmartCollectionViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Smart Collection"
+                           @bind-value="_selectedBreakContent.SmartCollection">
+                    @foreach (SmartCollectionViewModel collection in _smartCollections)
+                    {
+                    <MudSelectItem Value="@collection">@collection.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.TelevisionShow)
+                {
+                <MudSelect Class="mt-3"
+                           T="NamedMediaItemViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Television Show"
+                           @bind-value="_selectedBreakContent.MediaItem">
+                    @foreach (NamedMediaItemViewModel show in _televisionShows)
+                    {
+                    <MudSelectItem Value="@show">@show.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.TelevisionSeason)
+                {
+                <MudSelect Class="mt-3"
+                           T="NamedMediaItemViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Television Season"
+                           @bind-value="_selectedBreakContent.MediaItem">
+                    @foreach (NamedMediaItemViewModel season in _televisionSeasons)
+                    {
+                    <MudSelectItem Value="@season">@season.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
+                @if (_selectedBreakContent.CollectionType == ProgramScheduleItemCollectionType.Artist)
+                {
+                <MudSelect Class="mt-3"
+                           T="NamedMediaItemViewModel"
+                           Disabled="@(_deco.BreakContentMode != DecoMode.Override)"
+                           Label="Artist"
+                           @bind-value="_selectedBreakContent.MediaItem">
+                    @foreach (NamedMediaItemViewModel artist in _artists)
+                    {
+                    <MudSelectItem Value="@artist">@artist.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                }
             </MudCardContent>
         </MudCard>
     </MudStack>
@@ -318,6 +409,7 @@
     private List<NamedMediaItemViewModel> _televisionSeasons = [];
     private List<NamedMediaItemViewModel> _artists = [];
 
+    private DecoBreakContentEditViewModel _selectedBreakContent = new();
 
     public void Dispose()
     {
@@ -369,34 +461,34 @@
                 DefaultFillerMode = deco.DefaultFillerMode,
                 DefaultFillerCollectionType = deco.DefaultFillerCollectionType,
                 DefaultFillerCollection = deco.DefaultFillerCollectionId.HasValue
-                    ? _mediaCollections.Find(c => c.Id == deco.DefaultFillerCollectionId.Value)
+                    ? _mediaCollections.Find(c => c.Id == deco.DefaultFillerCollectionId!.Value)
                     : null,
                 DefaultFillerMediaItem = deco.DefaultFillerMediaItemId.HasValue
                     ? _televisionShows.Append(_televisionSeasons).Append(_artists).ToList()
-                        .Find(vm => vm.MediaItemId == deco.DefaultFillerMediaItemId.Value)
+                        .Find(vm => vm.MediaItemId == deco.DefaultFillerMediaItemId!.Value)
                     : null,
                 DefaultFillerMultiCollection = deco.DefaultFillerMultiCollectionId.HasValue
-                    ? _multiCollections.Find(c => c.Id == deco.DefaultFillerMultiCollectionId.Value)
+                    ? _multiCollections.Find(c => c.Id == deco.DefaultFillerMultiCollectionId!.Value)
                     : null,
                 DefaultFillerSmartCollection = deco.DefaultFillerSmartCollectionId.HasValue
-                    ? _smartCollections.Find(c => c.Id == deco.DefaultFillerSmartCollectionId.Value)
+                    ? _smartCollections.Find(c => c.Id == deco.DefaultFillerSmartCollectionId!.Value)
                     : null,
                 DefaultFillerTrimToFit = deco.DefaultFillerTrimToFit,
 
                 DeadAirFallbackMode = deco.DeadAirFallbackMode,
                 DeadAirFallbackCollectionType = deco.DeadAirFallbackCollectionType,
                 DeadAirFallbackCollection = deco.DeadAirFallbackCollectionId.HasValue
-                    ? _mediaCollections.Find(c => c.Id == deco.DeadAirFallbackCollectionId.Value)
+                    ? _mediaCollections.Find(c => c.Id == deco.DeadAirFallbackCollectionId!.Value)
                     : null,
                 DeadAirFallbackMediaItem = deco.DeadAirFallbackMediaItemId.HasValue
                     ? _televisionShows.Append(_televisionSeasons).Append(_artists).ToList()
-                        .Find(vm => vm.MediaItemId == deco.DeadAirFallbackMediaItemId.Value)
+                        .Find(vm => vm.MediaItemId == deco.DeadAirFallbackMediaItemId!.Value)
                     : null,
                 DeadAirFallbackMultiCollection = deco.DeadAirFallbackMultiCollectionId.HasValue
-                    ? _multiCollections.Find(c => c.Id == deco.DeadAirFallbackMultiCollectionId.Value)
+                    ? _multiCollections.Find(c => c.Id == deco.DeadAirFallbackMultiCollectionId!.Value)
                     : null,
                 DeadAirFallbackSmartCollection = deco.DeadAirFallbackSmartCollectionId.HasValue
-                    ? _smartCollections.Find(c => c.Id == deco.DeadAirFallbackSmartCollectionId.Value)
+                    ? _smartCollections.Find(c => c.Id == deco.DeadAirFallbackSmartCollectionId!.Value)
                     : null
             };
         }

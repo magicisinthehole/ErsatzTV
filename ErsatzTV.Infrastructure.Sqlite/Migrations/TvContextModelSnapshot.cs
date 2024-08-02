@@ -2152,6 +2152,9 @@ namespace ErsatzTV.Infrastructure.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BreakContentMode")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("DeadAirFallbackCollectionId")
                         .HasColumnType("INTEGER");
 
@@ -2227,6 +2230,48 @@ namespace ErsatzTV.Infrastructure.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("Deco", (string)null);
+                });
+
+            modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoBreakContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CollectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CollectionType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DecoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MediaItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MultiCollectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Placement")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("SmartCollectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("DecoId");
+
+                    b.HasIndex("MediaItemId");
+
+                    b.HasIndex("MultiCollectionId");
+
+                    b.HasIndex("SmartCollectionId");
+
+                    b.ToTable("DecoBreakContent", (string)null);
                 });
 
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoGroup", b =>
@@ -4579,6 +4624,45 @@ namespace ErsatzTV.Infrastructure.Sqlite.Migrations
                     b.Navigation("Watermark");
                 });
 
+            modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoBreakContent", b =>
+                {
+                    b.HasOne("ErsatzTV.Core.Domain.Collection", "Collection")
+                        .WithMany()
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ErsatzTV.Core.Domain.Scheduling.Deco", "Deco")
+                        .WithMany("BreakContent")
+                        .HasForeignKey("DecoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ErsatzTV.Core.Domain.MediaItem", "MediaItem")
+                        .WithMany()
+                        .HasForeignKey("MediaItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ErsatzTV.Core.Domain.MultiCollection", "MultiCollection")
+                        .WithMany()
+                        .HasForeignKey("MultiCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ErsatzTV.Core.Domain.SmartCollection", "SmartCollection")
+                        .WithMany()
+                        .HasForeignKey("SmartCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("Deco");
+
+                    b.Navigation("MediaItem");
+
+                    b.Navigation("MultiCollection");
+
+                    b.Navigation("SmartCollection");
+                });
+
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoTemplate", b =>
                 {
                     b.HasOne("ErsatzTV.Core.Domain.Scheduling.DecoTemplateGroup", "DecoTemplateGroup")
@@ -5505,6 +5589,8 @@ namespace ErsatzTV.Infrastructure.Sqlite.Migrations
 
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.Deco", b =>
                 {
+                    b.Navigation("BreakContent");
+
                     b.Navigation("Playouts");
                 });
 
