@@ -489,7 +489,9 @@
                     : null,
                 DeadAirFallbackSmartCollection = deco.DeadAirFallbackSmartCollectionId.HasValue
                     ? _smartCollections.Find(c => c.Id == deco.DeadAirFallbackSmartCollectionId!.Value)
-                    : null
+                    : null,
+
+                BreakContentMode = deco.BreakContentMode
             };
         }
     }
@@ -514,7 +516,8 @@
             _deco.DeadAirFallbackCollection?.Id,
             _deco.DeadAirFallbackMediaItem?.MediaItemId,
             _deco.DeadAirFallbackMultiCollection?.Id,
-            _deco.DeadAirFallbackSmartCollection?.Id);
+            _deco.DeadAirFallbackSmartCollection?.Id,
+            _deco.BreakContentMode);
 
         Seq<BaseError> errorMessages = await Mediator
             .Send(request, _cts.Token)

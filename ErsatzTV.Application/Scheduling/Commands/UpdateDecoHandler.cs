@@ -60,6 +60,9 @@ public class UpdateDecoHandler(IDbContextFactory<TvContext> dbContextFactory)
             ? request.DeadAirFallbackSmartCollectionId
             : null;
 
+        // break content
+        existing.BreakContentMode = request.BreakContentMode;
+
         await dbContext.SaveChangesAsync();
 
         return Mapper.ProjectToViewModel(existing);

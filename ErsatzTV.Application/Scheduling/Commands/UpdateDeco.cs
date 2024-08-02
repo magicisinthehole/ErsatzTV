@@ -22,5 +22,6 @@ public record UpdateDeco(
     int? DeadAirFallbackCollectionId,
     int? DeadAirFallbackMediaItemId,
     int? DeadAirFallbackMultiCollectionId,
-    int? DeadAirFallbackSmartCollectionId)
+    int? DeadAirFallbackSmartCollectionId,
+    DecoMode BreakContentMode)
     : IRequest<Either<BaseError, DecoViewModel>>;

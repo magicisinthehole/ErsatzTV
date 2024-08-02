@@ -68,7 +68,8 @@ internal static class Mapper
             deco.DeadAirFallbackCollectionId,
             deco.DeadAirFallbackMediaItemId,
             deco.DeadAirFallbackMultiCollectionId,
-            deco.DeadAirFallbackSmartCollectionId);
+            deco.DeadAirFallbackSmartCollectionId,
+            deco.BreakContentMode);
 
     internal static DecoTemplateGroupViewModel ProjectToViewModel(DecoTemplateGroup decoTemplateGroup) =>
         new(decoTemplateGroup.Id, decoTemplateGroup.Name, decoTemplateGroup.DecoTemplates.Count);

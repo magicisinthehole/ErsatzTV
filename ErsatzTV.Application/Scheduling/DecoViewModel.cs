@@ -21,4 +21,5 @@ public record DecoViewModel(
     int? DeadAirFallbackCollectionId,
     int? DeadAirFallbackMediaItemId,
     int? DeadAirFallbackMultiCollectionId,
-    int? DeadAirFallbackSmartCollectionId);
+    int? DeadAirFallbackSmartCollectionId,
+    DecoMode BreakContentMode);
