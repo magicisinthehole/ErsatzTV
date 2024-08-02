@@ -1,10 +1,9 @@
 namespace ErsatzTV.Core.Domain.Scheduling;
 
-[Flags]
 public enum DecoBreakPlacement
 {
-    BlockStart,
-    BlockFinish,
-    BetweenBlockItems,
-    ChapterMarkers
+    BlockStart = 0,
+    BlockFinish = 1,
+    BetweenBlockItems = 2,
+    ChapterMarkers = 3
 }
