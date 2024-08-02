@@ -13,7 +13,6 @@ public class DecoBreakContentEditViewModel : INotifyPropertyChanged
     private ProgramScheduleItemCollectionType _collectionType;
 
     public int Id { get; set; }
-    public int Index { get; set; }
 
     public ProgramScheduleItemCollectionType CollectionType
     {

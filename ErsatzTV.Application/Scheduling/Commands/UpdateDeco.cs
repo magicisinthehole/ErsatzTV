@@ -4,6 +4,15 @@ using ErsatzTV.Core.Domain.Scheduling;
 
 namespace ErsatzTV.Application.Scheduling;
 
+public record UpdateDecoBreakContent(
+    int Id,
+    ProgramScheduleItemCollectionType CollectionType,
+    int? CollectionId,
+    int? MediaItemId,
+    int? MultiCollectionId,
+    int? SmartCollectionId,
+    DecoBreakPlacement Placement);
+
 public record UpdateDeco(
     int DecoId,
     int DecoGroupId,
@@ -23,5 +32,6 @@ public record UpdateDeco(
     int? DeadAirFallbackMediaItemId,
     int? DeadAirFallbackMultiCollectionId,
     int? DeadAirFallbackSmartCollectionId,
-    DecoMode BreakContentMode)
+    DecoMode BreakContentMode,
+    List<UpdateDecoBreakContent> BreakContent)
     : IRequest<Either<BaseError, DecoViewModel>>;

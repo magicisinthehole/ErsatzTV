@@ -308,7 +308,7 @@
         <MudCard class="mb-6" Style="width: 700px">
             <MudTable T="DecoBreakContentEditViewModel"
                       Class="mt-4" Dense="true" Hover="true"
-                      Items="_deco.BreakContent.OrderBy(i => i.Index)"
+                      Items="_deco.BreakContent"
                       ReadOnly="@(_deco.BreakContentMode != DecoMode.Override)"
                       IsEditRowSwitchingBlocked="true">
                 <ToolBarContent>
@@ -487,16 +487,27 @@
                     : null,
 
                 BreakContentMode = deco.BreakContentMode,
-                BreakContent = []
+                BreakContent = deco.BreakContent.Map(ProjectToEditViewModel).ToList()
             };
         }
     }
+
+    private static DecoBreakContentEditViewModel ProjectToEditViewModel(DecoBreakContentViewModel vm) =>
+        new()
+        {
+            Id = vm.Id,
+            CollectionType = vm.CollectionType,
+            Collection = vm.Collection,
+            MediaItem = vm.MediaItem,
+            MultiCollection = vm.MultiCollection,
+            SmartCollection = vm.SmartCollection,
+            Placement = vm.Placement
+        };
 
     private void AddBreakContent()
     {
         var item = new DecoBreakContentEditViewModel
         {
-            Index = _deco.BreakContent.Map(i => i.Index).DefaultIfEmpty().Max() + 1,
             CollectionType = ProgramScheduleItemCollectionType.Collection,
             Collection = null,
             Placement = DecoBreakPlacement.BlockStart
@@ -512,6 +523,10 @@
 
     private async Task SaveChanges()
     {
+        var breakContent = _deco.BreakContent
+            .Map(vm => new UpdateDecoBreakContent(vm.Id, vm.CollectionType, vm.Collection?.Id, vm.MediaItem?.MediaItemId, vm.MultiCollection?.Id, vm.SmartCollection?.Id, vm.Placement))
+            .ToList();
+
         var request = new UpdateDeco(
             Id,
             _deco.DecoGroupId,
@@ -531,7 +546,8 @@
             _deco.DeadAirFallbackMediaItem?.MediaItemId,
             _deco.DeadAirFallbackMultiCollection?.Id,
             _deco.DeadAirFallbackSmartCollection?.Id,
-            _deco.BreakContentMode);
+            _deco.BreakContentMode,
+            breakContent);
 
         Seq<BaseError> errorMessages = await Mediator
             .Send(request, _cts.Token)

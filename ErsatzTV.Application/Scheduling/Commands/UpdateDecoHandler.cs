@@ -63,6 +63,43 @@ public class UpdateDecoHandler(IDbContextFactory<TvContext> dbContextFactory)
         // break content
         existing.BreakContentMode = request.BreakContentMode;
 
+        var toAdd = request.BreakContent.Filter(bc => bc.Id < 1).ToList();
+        var toRemove = existing.BreakContent.Filter(bc => request.BreakContent.All(bc2 => bc2.Id != bc.Id)).ToList();
+        var toUpdate = request.BreakContent.Except(toAdd).ToList();
+
+        foreach (DecoBreakContent remove in toRemove)
+        {
+            existing.BreakContent.Remove(remove);
+        }
+
+        foreach (UpdateDecoBreakContent add in toAdd)
+        {
+            existing.BreakContent.Add(
+                new DecoBreakContent
+                {
+                    CollectionType = add.CollectionType,
+                    CollectionId = add.CollectionId,
+                    MediaItemId = add.MediaItemId,
+                    MultiCollectionId = add.MultiCollectionId,
+                    SmartCollectionId = add.SmartCollectionId,
+                    Placement = add.Placement
+                });
+        }
+
+        foreach (UpdateDecoBreakContent update in toUpdate)
+        {
+            Option<DecoBreakContent> maybeExisting = existing.BreakContent.Find(bc => bc.Id == update.Id);
+            foreach (DecoBreakContent bc in maybeExisting)
+            {
+                bc.CollectionType = update.CollectionType;
+                bc.CollectionId = update.CollectionId;
+                bc.MediaItemId = update.MediaItemId;
+                bc.MultiCollectionId = update.MultiCollectionId;
+                bc.SmartCollectionId = update.SmartCollectionId;
+                bc.Placement = update.Placement;
+            }
+        }
+
         await dbContext.SaveChangesAsync();
 
         return Mapper.ProjectToViewModel(existing);
@@ -76,6 +113,7 @@ public class UpdateDecoHandler(IDbContextFactory<TvContext> dbContextFactory)
         TvContext dbContext,
         UpdateDeco request) =>
         dbContext.Decos
+            .Include(d => d.BreakContent)
             .SelectOneAsync(d => d.Id, d => d.Id == request.DecoId)
             .Map(o => o.ToValidation<BaseError>("Deco does not exist"));
 

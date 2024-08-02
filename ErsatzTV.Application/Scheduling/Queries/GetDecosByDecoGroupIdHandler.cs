@@ -12,6 +12,7 @@ public class GetDecosByDecoGroupIdHandler(IDbContextFactory<TvContext> dbContext
         await using TvContext dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
         List<Deco> decos = await dbContext.Decos
+            .Include(d => d.BreakContent)
             .Filter(b => b.DecoGroupId == request.DecoGroupId)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

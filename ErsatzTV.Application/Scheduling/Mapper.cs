@@ -69,7 +69,18 @@ internal static class Mapper
             deco.DeadAirFallbackMediaItemId,
             deco.DeadAirFallbackMultiCollectionId,
             deco.DeadAirFallbackSmartCollectionId,
-            deco.BreakContentMode);
+            deco.BreakContentMode,
+            deco.BreakContent.Map(ProjectToViewModel).ToList());
+
+    internal static DecoBreakContentViewModel ProjectToViewModel(DecoBreakContent decoBreakContent) =>
+        new(
+            decoBreakContent.Id,
+            decoBreakContent.CollectionType,
+            decoBreakContent.Collection is not null ? MediaCollections.Mapper.ProjectToViewModel(decoBreakContent.Collection) : null,
+            null, // not supporting show, season, artist, etc. yet
+            decoBreakContent.MultiCollection is not null ? MediaCollections.Mapper.ProjectToViewModel(decoBreakContent.MultiCollection) : null,
+            decoBreakContent.SmartCollection is not null ? MediaCollections.Mapper.ProjectToViewModel(decoBreakContent.SmartCollection) : null,
+            decoBreakContent.Placement);
 
     internal static DecoTemplateGroupViewModel ProjectToViewModel(DecoTemplateGroup decoTemplateGroup) =>
         new(decoTemplateGroup.Id, decoTemplateGroup.Name, decoTemplateGroup.DecoTemplates.Count);
