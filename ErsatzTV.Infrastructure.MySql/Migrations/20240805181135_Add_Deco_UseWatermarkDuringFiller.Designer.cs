@@ -4,6 +4,7 @@ using ErsatzTV.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ErsatzTV.Infrastructure.MySql.Migrations
 {
     [DbContext(typeof(TvContext))]
-    partial class TvContextModelSnapshot : ModelSnapshot
+    [Migration("20240805181135_Add_Deco_UseWatermarkDuringFiller")]
+    partial class Add_Deco_UseWatermarkDuringFiller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2267,9 +2270,6 @@ namespace ErsatzTV.Infrastructure.MySql.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BreakContentMode")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DeadAirFallbackCollectionId")
                         .HasColumnType("int");
 
@@ -2348,50 +2348,6 @@ namespace ErsatzTV.Infrastructure.MySql.Migrations
                         .IsUnique();
 
                     b.ToTable("Deco", (string)null);
-                });
-
-            modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoBreakContent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CollectionType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DecoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MediaItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MultiCollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Placement")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SmartCollectionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectionId");
-
-                    b.HasIndex("DecoId");
-
-                    b.HasIndex("MediaItemId");
-
-                    b.HasIndex("MultiCollectionId");
-
-                    b.HasIndex("SmartCollectionId");
-
-                    b.ToTable("DecoBreakContent", (string)null);
                 });
 
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoGroup", b =>
@@ -4790,45 +4746,6 @@ namespace ErsatzTV.Infrastructure.MySql.Migrations
                     b.Navigation("Watermark");
                 });
 
-            modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoBreakContent", b =>
-                {
-                    b.HasOne("ErsatzTV.Core.Domain.Collection", "Collection")
-                        .WithMany()
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ErsatzTV.Core.Domain.Scheduling.Deco", "Deco")
-                        .WithMany("BreakContent")
-                        .HasForeignKey("DecoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ErsatzTV.Core.Domain.MediaItem", "MediaItem")
-                        .WithMany()
-                        .HasForeignKey("MediaItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ErsatzTV.Core.Domain.MultiCollection", "MultiCollection")
-                        .WithMany()
-                        .HasForeignKey("MultiCollectionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ErsatzTV.Core.Domain.SmartCollection", "SmartCollection")
-                        .WithMany()
-                        .HasForeignKey("SmartCollectionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Collection");
-
-                    b.Navigation("Deco");
-
-                    b.Navigation("MediaItem");
-
-                    b.Navigation("MultiCollection");
-
-                    b.Navigation("SmartCollection");
-                });
-
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.DecoTemplate", b =>
                 {
                     b.HasOne("ErsatzTV.Core.Domain.Scheduling.DecoTemplateGroup", "DecoTemplateGroup")
@@ -5755,8 +5672,6 @@ namespace ErsatzTV.Infrastructure.MySql.Migrations
 
             modelBuilder.Entity("ErsatzTV.Core.Domain.Scheduling.Deco", b =>
                 {
-                    b.Navigation("BreakContent");
-
                     b.Navigation("Playouts");
                 });
 

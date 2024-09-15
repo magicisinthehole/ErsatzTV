@@ -2200,6 +2200,9 @@ namespace ErsatzTV.Infrastructure.Sqlite.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("UseWatermarkDuringFiller")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("WatermarkId")
                         .HasColumnType("INTEGER");
 

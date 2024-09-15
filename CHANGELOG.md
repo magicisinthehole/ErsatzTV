@@ -37,6 +37,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - POST `/api/channels/{channelNumber}/playout/reset`
   - Scan library
     - POST `/api/libraries/{libraryId}/scan`
+- Add Deco setting to `Use Watermark During Filler`
+  - This setting is turned OFF by default, meaning filler will NOT use the configured watermark unless this is manually turned on
+- Add `Random Count` filler mode by @embolon
+  - This mode will randomly schedule between zero and the provided count number of items
+  - e.g. random count 3 will schedule between 0 and 3 filler items
+- Add `Random Rotation` playback order for block scheduling by @embolon
+  - This playback order will pick a random item from a randomly selected group (show or artist)
+  - It is somewhat similar to the `Fill With Group` mode used in flood scheduling
 
 ### Fixed
 - Add basic cache busting to XMLTV image URLs
@@ -56,10 +64,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix incorrectly removing block items that are hidden from EPG when deco filler is applied
 - Fix deco selection when deco is scheduled until midnight
   - Previously, this deco item would be ignored so watermark and filler would be missing
+- Fix movies with missing medata by generating fallback metadata
+  - This allows these movies to appear in the Trash where they can be deleted
+- Fix synchronizing trakt lists from users with special characters in their username
+  - Note that these lists MUST be added as URLs; the short-form `user/list` will NOT work with special characters
+- Fix local subtitle scanner to detect non-lowercase extensions (e.g. `Movie (2000).EN.SRT`)
+- Fix adding a single image to a manual collection from search results
+- Fix loading manual collection view when collection contains images
+- Fix edge case where block playout history would get stuck and repeat an item
+- Fix adjusting watermark opacity when watermark already contains alpha channel (is already transparent)
 
 ### Changed
 - Remove some unnecessary API calls related to media server scanning and paging
 - Improve trakt list URL validation; non-trakt URLs will no longer be requested
+- Prevent saving block templates when blocks are overlapping
+  - This can happen if block durations are changed for blocks that are already on the template
+- Redirect variant playlist request to proper URL for starting `HLS Segmenter` session when no session is active
+  - This can happen when some clients "pause" long enough for the session to stop in ETV
+  - When the client resumes playback, it requests the temp playlist URL which is now invalid e.g. `/iptv/session/1/hls.m3u8` (not the original URL `/iptv/channel/1.m3u8`)
+  - To fix, the client will be redirected back to the original URL in this case which will create a new session
 
 ## [0.8.7-beta] - 2024-06-26
 ### Added
