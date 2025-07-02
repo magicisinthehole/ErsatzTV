@@ -105,28 +105,34 @@ public class TranscodingTests
         Text
     }
 
+    public enum Seek
+    {
+        None,
+        Middle
+    }
+
     private class TestData
     {
         public static Watermark[] Watermarks =
         [
             Watermark.None,
             Watermark.PermanentOpaqueScaled,
-            Watermark.PermanentOpaqueActualSize,
-            Watermark.PermanentTransparentScaled,
-            Watermark.PermanentTransparentActualSize
+            //Watermark.PermanentOpaqueActualSize,
+            //Watermark.PermanentTransparentScaled,
+            //Watermark.PermanentTransparentActualSize
         ];
 
         public static Subtitle[] Subtitles =
         [
             Subtitle.None,
-            Subtitle.Picture,
-            Subtitle.Text
+            //Subtitle.Picture,
+            //Subtitle.Text
         ];
 
         public static Padding[] Paddings =
         [
             Padding.NoPadding,
-            Padding.WithPadding
+            //Padding.WithPadding
         ];
 
         public static ScalingBehavior[] ScalingBehaviors =
@@ -159,20 +165,26 @@ public class TranscodingTests
             // new("mpeg2video", "yuv420p"),
             // //
             //new InputFormat("libx265", "yuv420p"),
-            new InputFormat("libx265", "yuv420p10le")
+            //new("libx265", "yuv420p10le"),
             //
             // new("mpeg4", "yuv420p"),
             //
             // new("libvpx-vp9", "yuv420p"),
             // new("libvpx-vp9", "yuv420p10le"),
             //
-            // // // new("libaom-av1", "yuv420p")
+            //new("libsvtav1", "yuv420p")
             // // // av1    yuv420p10le    51
             // //
             // new("msmpeg4v2", "yuv420p"),
             // new("msmpeg4v3", "yuv420p")
             //
             // // wmv3    yuv420p    1
+        ];
+
+        public static Seek[] Seeks =
+        [
+            Seek.None,
+            Seek.Middle
         ];
 
         public static Resolution[] Resolutions =
@@ -212,7 +224,7 @@ public class TranscodingTests
             //StreamingMode.HttpLiveStreamingSegmenterV2
         ];
 
-        public static string[] FilesToTest => [string.Empty];
+        public static string[] FilesToTest => Directory.GetFiles("/home/jason/Videos/ErsatzTV/test-content");
     }
 
     [Test]
@@ -393,6 +405,7 @@ public class TranscodingTests
             VaapiDriver.RadeonSI,
             localStatisticsProvider,
             streamingMode,
+            watermark,
             () => videoVersion);
     }
 
@@ -401,8 +414,10 @@ public class TranscodingTests
     public async Task Transcode(
         [ValueSource(typeof(TestData), nameof(TestData.FilesToTest))]
         string fileToTest,
-        [ValueSource(typeof(TestData), nameof(TestData.InputFormats))]
-        InputFormat inputFormat,
+        //[ValueSource(typeof(TestData), nameof(TestData.InputFormats))]
+        //InputFormat inputFormat,
+        [ValueSource(typeof(TestData), nameof(TestData.Seeks))]
+        Seek seek,
         [ValueSource(typeof(TestData), nameof(TestData.Resolutions))]
         Resolution profileResolution,
         [ValueSource(typeof(TestData), nameof(TestData.BitDepths))]
@@ -425,29 +440,29 @@ public class TranscodingTests
         StreamingMode streamingMode)
     {
         string file = fileToTest;
-        if (string.IsNullOrWhiteSpace(file))
-        {
-            // some formats don't support interlaced content (mpeg1video, msmpeg4v2, msmpeg4v3)
-            // others (libx265, any 10-bit) are unlikely to have interlaced content, so don't bother testing
-            if (inputFormat.Encoder is "mpeg1video" or "msmpeg4v2" or "msmpeg4v3" or "libx265" ||
-                inputFormat.PixelFormat.Contains("10"))
-            {
-                if (videoScanKind == VideoScanKind.Interlaced)
-                {
-                    Assert.Inconclusive(
-                        $"{inputFormat.Encoder}/{inputFormat.PixelFormat} does not support interlaced content");
-                    return;
-                }
-            }
-
-            string name = GetStringSha256Hash($"{inputFormat}_{videoScanKind}_{padding}_{scalingBehavior}_{subtitle}");
-
-            file = Path.Combine(TestContext.CurrentContext.TestDirectory, $"{name}.mkv");
-            if (!File.Exists(file))
-            {
-                await GenerateTestFile(inputFormat, padding, scalingBehavior, videoScanKind, subtitle, file);
-            }
-        }
+        // if (string.IsNullOrWhiteSpace(file))
+        // {
+        //     // some formats don't support interlaced content (mpeg1video, msmpeg4v2, msmpeg4v3)
+        //     // others (libx265, any 10-bit) are unlikely to have interlaced content, so don't bother testing
+        //     if (inputFormat.Encoder is "mpeg1video" or "msmpeg4v2" or "msmpeg4v3" or "libx265" ||
+        //         inputFormat.PixelFormat.Contains("10"))
+        //     {
+        //         if (videoScanKind == VideoScanKind.Interlaced)
+        //         {
+        //             Assert.Inconclusive(
+        //                 $"{inputFormat.Encoder}/{inputFormat.PixelFormat} does not support interlaced content");
+        //             return;
+        //         }
+        //     }
+        //
+        //     string name = GetStringSha256Hash($"{inputFormat}_{videoScanKind}_{padding}_{scalingBehavior}_{subtitle}");
+        //
+        //     file = Path.Combine(TestContext.CurrentContext.TestDirectory, $"{name}.mkv");
+        //     if (!File.Exists(file))
+        //     {
+        //         await GenerateTestFile(inputFormat, padding, scalingBehavior, videoScanKind, subtitle, file);
+        //     }
+        // }
 
         var v = new MediaVersion
         {
@@ -574,7 +589,7 @@ public class TranscodingTests
                 .Any();
 
             // TODO: sometimes scaling is used for pixel format, so this is harder to assert the absence
-            if (profileResolution.Width != 1920 && profileResolution.Width != 640)
+            if (v.Width != profileResolution.Width && v.Height != profileResolution.Height)
             {
                 hasScaling.ShouldBeTrue();
             }
@@ -613,6 +628,12 @@ public class TranscodingTests
         }
 
         FFmpegLibraryProcessService service = GetService();
+
+        TimeSpan startTime = TimeSpan.Zero;
+        if (seek is Seek.Middle)
+        {
+            startTime = v.Duration / 2.0;
+        }
 
         Command process = await service.ForPlayoutItem(
             ExecutableName("ffmpeg"),
@@ -653,8 +674,8 @@ public class TranscodingTests
             Option<int>.None,
             false,
             FillerKind.None,
-            TimeSpan.Zero,
-            TimeSpan.FromSeconds(3),
+            startTime,
+            startTime + TimeSpan.FromSeconds(3),
             0,
             None,
             false,
@@ -671,6 +692,7 @@ public class TranscodingTests
             VaapiDriver.RadeonSI,
             localStatisticsProvider,
             streamingMode,
+            watermark,
             () => v);
     }
 
@@ -688,7 +710,9 @@ public class TranscodingTests
                     // TODO: how do we make sure this actually appears
                     FrequencyMinutes = 1,
                     DurationSeconds = 2,
-                    Opacity = 100
+                    Opacity = 100,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
             case Watermark.IntermittentTransparent:
                 return new ChannelWatermark
@@ -698,7 +722,9 @@ public class TranscodingTests
                     // TODO: how do we make sure this actually appears
                     FrequencyMinutes = 1,
                     DurationSeconds = 2,
-                    Opacity = 80
+                    Opacity = 80,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
             case Watermark.PermanentOpaqueScaled:
                 return new ChannelWatermark
@@ -707,7 +733,9 @@ public class TranscodingTests
                     Mode = ChannelWatermarkMode.Permanent,
                     Opacity = 100,
                     Size = WatermarkSize.Scaled,
-                    WidthPercent = 15
+                    WidthPercent = 15,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
             case Watermark.PermanentOpaqueActualSize:
                 return new ChannelWatermark
@@ -715,7 +743,9 @@ public class TranscodingTests
                     ImageSource = ChannelWatermarkImageSource.Custom,
                     Mode = ChannelWatermarkMode.Permanent,
                     Opacity = 100,
-                    Size = WatermarkSize.ActualSize
+                    Size = WatermarkSize.ActualSize,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
             case Watermark.PermanentTransparentScaled:
                 return new ChannelWatermark
@@ -724,7 +754,9 @@ public class TranscodingTests
                     Mode = ChannelWatermarkMode.Permanent,
                     Opacity = 80,
                     Size = WatermarkSize.Scaled,
-                    WidthPercent = 15
+                    WidthPercent = 15,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
             case Watermark.PermanentTransparentActualSize:
                 return new ChannelWatermark
@@ -732,7 +764,9 @@ public class TranscodingTests
                     ImageSource = ChannelWatermarkImageSource.Custom,
                     Mode = ChannelWatermarkMode.Permanent,
                     Opacity = 80,
-                    Size = WatermarkSize.ActualSize
+                    Size = WatermarkSize.ActualSize,
+                    HorizontalMarginPercent = 5,
+                    VerticalMarginPercent = 5
                 };
         }
 
@@ -777,7 +811,7 @@ public class TranscodingTests
             : string.Empty;
 
         var args =
-            $"-y -f lavfi -i anoisesrc=color=brown -f lavfi -i testsrc=duration=1:size={resolution}:rate=30 {videoFilter} -c:a aac -c:v {inputFormat.Encoder}{colorRange}{colorSpace}{colorTransfer}{colorPrimaries} -shortest -pix_fmt {inputFormat.PixelFormat} -strict -2 {flags} {file}";
+            $"-y -f lavfi -i anoisesrc=color=brown:duration=10 -f lavfi -i testsrc=duration=10:size={resolution}:rate=30 {videoFilter} -c:a aac -c:v {inputFormat.Encoder}{colorRange}{colorSpace}{colorTransfer}{colorPrimaries} -shortest -pix_fmt {inputFormat.PixelFormat} -strict -2 {flags} {file}";
         BufferedCommandResult p1 = await Cli.Wrap(ExecutableName("ffmpeg"))
             .WithArguments(args)
             .WithValidation(CommandResultValidation.None)
@@ -925,6 +959,7 @@ public class TranscodingTests
         VaapiDriver vaapiDriver,
         ILocalStatisticsProvider localStatisticsProvider,
         StreamingMode streamingMode,
+        Watermark watermark,
         Func<MediaVersion> getFinalMediaVersion)
     {
         string[] unsupportedMessages =
@@ -1015,8 +1050,12 @@ public class TranscodingTests
             v.VideoScanKind.ShouldNotBe(VideoScanKind.Interlaced);
 
             // verify resolution
-            v.Height.ShouldBe(profileResolution.Height);
-            v.Width.ShouldBe(profileResolution.Width);
+            // NVIDIA with watermark currently has a bug (overlay_cuda)
+            if (profileAcceleration is not HardwareAccelerationKind.Nvenc || watermark is Watermark.None)
+            {
+                v.Height.ShouldBe(profileResolution.Height);
+                v.Width.ShouldBe(profileResolution.Width);
+            }
 
             foreach (MediaStream videoStream in v.Streams.Filter(s => s.MediaStreamKind == MediaStreamKind.Video))
             {

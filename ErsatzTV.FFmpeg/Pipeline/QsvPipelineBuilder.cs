@@ -3,6 +3,7 @@ using ErsatzTV.FFmpeg.Decoder;
 using ErsatzTV.FFmpeg.Decoder.Qsv;
 using ErsatzTV.FFmpeg.Encoder;
 using ErsatzTV.FFmpeg.Encoder.Qsv;
+using ErsatzTV.FFmpeg.Environment;
 using ErsatzTV.FFmpeg.Filter;
 using ErsatzTV.FFmpeg.Filter.Qsv;
 using ErsatzTV.FFmpeg.Format;
@@ -88,6 +89,9 @@ public class QsvPipelineBuilder : SoftwarePipelineBuilder
         {
             decodeCapability = FFmpegCapability.Software;
         }
+
+        // give a bogus value so no cuda devices are visible to ffmpeg
+        pipelineSteps.Add(new CudaVisibleDevicesVariable("999"));
 
         pipelineSteps.Add(new QsvHardwareAccelerationOption(ffmpegState.VaapiDevice, decodeCapability));
 
