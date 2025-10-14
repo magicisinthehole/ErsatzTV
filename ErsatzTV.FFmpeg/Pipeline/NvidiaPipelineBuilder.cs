@@ -740,7 +740,10 @@ public class NvidiaPipelineBuilder : SoftwarePipelineBuilder
         FrameState desiredState,
         FrameState currentState)
     {
-        if (desiredState.CroppedSize.IsNone && currentState.PaddedSize != desiredState.PaddedSize)
+        // Don't pad if ScaledSize == PaddedSize (Scale behavior without padding)
+        bool shouldSkipPadding = desiredState.ScaledSize == desiredState.PaddedSize;
+
+        if (desiredState.CroppedSize.IsNone && currentState.PaddedSize != desiredState.PaddedSize && !shouldSkipPadding)
         {
             var padStep = new PadFilter(currentState, desiredState.PaddedSize);
             currentState = padStep.NextState(currentState);

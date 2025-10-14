@@ -579,7 +579,10 @@ public class VaapiPipelineBuilder : SoftwarePipelineBuilder
         FrameState currentState,
         bool isHdrTonemap)
     {
-        if (desiredState.CroppedSize.IsNone && currentState.PaddedSize != desiredState.PaddedSize)
+        // Don't pad if ScaledSize == PaddedSize (Scale behavior without padding)
+        bool shouldSkipPadding = desiredState.ScaledSize == desiredState.PaddedSize;
+
+        if (desiredState.CroppedSize.IsNone && currentState.PaddedSize != desiredState.PaddedSize && !shouldSkipPadding)
         {
             // pad_vaapi seems to pad with green when input is HDR
             // also green with i965 driver
