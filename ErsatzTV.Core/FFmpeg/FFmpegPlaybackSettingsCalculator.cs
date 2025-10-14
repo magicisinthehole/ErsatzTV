@@ -282,9 +282,9 @@ public static class FFmpegPlaybackSettingsCalculator
         int hh2 = targetSize.Height;
         int hw2 = targetSize.Height * p / q;
 
-        // crop and scale need to return whichever version has *both* dimensions >= required
-        // because they will never pad
-        if (ffmpegProfile.ScalingBehavior is ScalingBehavior.Crop or ScalingBehavior.Scale)
+        // crop needs to return whichever version has *both* dimensions >= required
+        // because it will scale to cover and then crop the excess
+        if (ffmpegProfile.ScalingBehavior is ScalingBehavior.Crop)
         {
             if (hw1 >= targetSize.Width && hh1 >= targetSize.Height)
             {
@@ -294,6 +294,7 @@ public static class FFmpegPlaybackSettingsCalculator
             return new DisplaySize(hw2, hh2);
         }
 
+        // scale and scale-and-pad need to fit within the target dimensions
         return hh1 <= targetSize.Height ? new DisplaySize(hw1, hh1) : new DisplaySize(hw2, hh2);
     }
 
