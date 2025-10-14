@@ -7,5 +7,6 @@ public enum ScalingBehavior
 {
     ScaleAndPad = 0,
     Stretch = 1,
-    Crop = 2
+    Crop = 2,
+    Scale = 3
 }

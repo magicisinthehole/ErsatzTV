@@ -113,7 +113,7 @@ public static class FFmpegPlaybackSettingsCalculator
 
                 IDisplaySize sizeAfterScaling = result.ScaledSize.IfNone(videoVersion);
                 if (!sizeAfterScaling.IsSameSizeAs(ffmpegProfile.Resolution) &&
-                    ffmpegProfile.ScalingBehavior is not ScalingBehavior.Crop)
+                    ffmpegProfile.ScalingBehavior is not (ScalingBehavior.Crop or ScalingBehavior.Scale))
                 {
                     result.PadToDesiredResolution = true;
                 }
@@ -257,7 +257,7 @@ public static class FFmpegPlaybackSettingsCalculator
 
     private static bool TooSmallToCrop(FFmpegProfile ffmpegProfile, MediaVersion version)
     {
-        if (ffmpegProfile.ScalingBehavior is not ScalingBehavior.Crop)
+        if (ffmpegProfile.ScalingBehavior is not (ScalingBehavior.Crop or ScalingBehavior.Scale))
         {
             return false;
         }
@@ -282,9 +282,9 @@ public static class FFmpegPlaybackSettingsCalculator
         int hh2 = targetSize.Height;
         int hw2 = targetSize.Height * p / q;
 
-        // crop needs to return whichever version has *both* dimensions >= required
-        // because it will never pad
-        if (ffmpegProfile.ScalingBehavior is ScalingBehavior.Crop)
+        // crop and scale need to return whichever version has *both* dimensions >= required
+        // because they will never pad
+        if (ffmpegProfile.ScalingBehavior is ScalingBehavior.Crop or ScalingBehavior.Scale)
         {
             if (hw1 >= targetSize.Width && hh1 >= targetSize.Height)
             {
