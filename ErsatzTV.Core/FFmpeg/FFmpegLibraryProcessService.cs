@@ -449,6 +449,19 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
                 channel.FFmpegProfile.Resolution.Height);
         }
 
+        if (channel.FFmpegProfile.ScalingBehavior is ScalingBehavior.Scale)
+        {
+            // Scale behavior: scale to fit without padding or cropping
+            // Use the calculated scaledSize and set paddedSize equal to it to prevent padding
+            foreach (IDisplaySize size in playbackSettings.ScaledSize)
+            {
+                scaledSize = new FrameSize(size.Width, size.Height);
+            }
+
+            paddedSize = scaledSize;
+            // Don't set cropSize - we want to scale without cropping
+        }
+
         var desiredState = new FrameState(
             playbackSettings.RealtimeOutput,
             fillerKind == FillerKind.Fallback,
