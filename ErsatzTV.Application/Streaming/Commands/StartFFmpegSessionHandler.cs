@@ -11,7 +11,6 @@ using ErsatzTV.Core.Interfaces.FFmpeg;
 using ErsatzTV.Core.Interfaces.Metadata;
 using ErsatzTV.Core.Interfaces.Repositories;
 using ErsatzTV.Core.Interfaces.Streaming;
-using ErsatzTV.FFmpeg.OutputFormat;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -25,6 +24,7 @@ public class StartFFmpegSessionHandler : IRequestHandler<StartFFmpegSession, Eit
     private readonly IFFmpegSegmenterService _ffmpegSegmenterService;
     private readonly IGraphicsEngine _graphicsEngine;
     private readonly IHlsPlaylistFilter _hlsPlaylistFilter;
+    private readonly IHlsInitSegmentCache _hlsInitSegmentCache;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly ILocalFileSystem _localFileSystem;
     private readonly ILogger<StartFFmpegSessionHandler> _logger;
@@ -35,6 +35,7 @@ public class StartFFmpegSessionHandler : IRequestHandler<StartFFmpegSession, Eit
 
     public StartFFmpegSessionHandler(
         IHlsPlaylistFilter hlsPlaylistFilter,
+        IHlsInitSegmentCache hlsInitSegmentCache,
         IServiceScopeFactory serviceScopeFactory,
         IMediator mediator,
         IClient client,
@@ -48,6 +49,7 @@ public class StartFFmpegSessionHandler : IRequestHandler<StartFFmpegSession, Eit
         ChannelWriter<IBackgroundServiceRequest> workerChannel)
     {
         _hlsPlaylistFilter = hlsPlaylistFilter;
+        _hlsInitSegmentCache = hlsInitSegmentCache;
         _serviceScopeFactory = serviceScopeFactory;
         _mediator = mediator;
         _client = client;
@@ -120,10 +122,10 @@ public class StartFFmpegSessionHandler : IRequestHandler<StartFFmpegSession, Eit
         {
             _ => new HlsSessionWorker(
                 _serviceScopeFactory,
-                OutputFormatKind.HlsMp4,
                 _graphicsEngine,
                 _client,
                 _hlsPlaylistFilter,
+                _hlsInitSegmentCache,
                 _configElementRepository,
                 _localFileSystem,
                 _sessionWorkerLogger,

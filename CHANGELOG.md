@@ -23,6 +23,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add playback speed to playback troubleshooting output
   - Speed is relative to realtime (1.0x is realtime)
   - Speeds < 0.9x will be colored red, between 0.9x and 1.1x colored yellow, and > 1.1x colored green
+- Add episode thumbnail artwork URL to XMLTV template
+  - By default, poster will be added as image with type "poster" and thumbnail will be added as image with type "still"
+  - Poster will continue to be added as icon by default
 
 ### Fixed
 - Fix NVIDIA startup errors on arm64
@@ -37,6 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix Trakt List sync
 - Fix QSV audio sync
 - Fix QSV capability detection on Linux using non-drm displays (e.g. wayland)
+- Fix playlist filtering bug that made HLS Segmenter more likely to fail when streaming for multiple hours
+- Fix NVIDIA overlaying text subtitles and permanent watermark on 10-bit content
 
 ### Changed
 - Do not use graphics engine for single, permanent watermark
