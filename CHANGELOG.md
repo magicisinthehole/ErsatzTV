@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add episode thumbnail artwork URL to XMLTV template
   - By default, poster will be added as image with type "poster" and thumbnail will be added as image with type "still"
   - Poster will continue to be added as icon by default
+- Add buttons to edit Jellyfin and Emby connection information in **Media Sources** > **Jellyfin** and **Media Sources** > **Emby**
 
 ### Fixed
 - Fix NVIDIA startup errors on arm64
@@ -50,7 +51,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Rename `YAML Validation` tool to `Sequential Schedule Validation`
 - Greatly reduce debug log spam during playout builds by logging summaries of certain warnings at the end
 - Remove *experimental* `HLS Segmenter V2` streaming mode; it is not possible to maintain quality output using this mode
-- Remove original `HLS Segmenter` streaming mode and rename `HLS Segmenter (fmp4)` to `HLS Segmenter`
+- Remove *experimental* `HLS Segmenter (fmp4)` streaming mode; this mode only worked properly in a browser, many clients did not like it
+- Change how scanner process and main process communicate, which should improve reliability of search index updates when scanning
 
 ## [25.7.1] - 2025-10-09
 ### Added
