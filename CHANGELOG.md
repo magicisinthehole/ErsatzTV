@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Fixed
+- Fix HLS Direct playback with Jellyfin 10.11
+
+## [25.8.0] - 2025-10-26
 ### Added
 - Graphics engine:
   - Add template data (like `MediaItem_Title`) for other video files
@@ -41,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve reliability of live remote streams; they should transcode closer to realtime in most cases
 - Dramatically improve stream startup time
 - VAAPI: fix scaling image-based subtitles (e.g. dvdsub)
+- VAAPI: fix overlaying picture subtitles with scaling behavior crop
 - Fix HLS Segmenter (fmp4) on Windows
 - Playback troubleshooting: wait for at least 2 initial segments (up to configured initial segment count) to reduce stalls
 - Fix Trakt List sync
@@ -55,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix playout builder getting stuck (forever) on block item with an empty collection
 - Fix HLS Direct playback when using custom stream selector or preferred audio language/title
 - Fix selecting embedded subtitles (text and picture) with HLS Direct
+- Fix building scripted schedules across a UTC offset change
 
 ### Changed
 - Do not use graphics engine for single, permanent watermark
@@ -2884,7 +2890,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Initial release to facilitate testing outside of Docker.
 
 
-[Unreleased]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.7.1...HEAD
+[Unreleased]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.8.0...HEAD
+[25.8.0]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.7.1...v25.8.0
 [25.7.1]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.7.0...v25.7.1
 [25.7.0]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.6.0...v25.7.0
 [25.6.0]: https://github.com/ErsatzTV/ErsatzTV/compare/v25.5.0...v25.6.0
