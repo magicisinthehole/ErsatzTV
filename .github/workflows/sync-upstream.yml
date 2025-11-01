@@ -2,8 +2,7 @@ name: Sync with Upstream and Build
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * *'   # daily 2 AM UTC
   workflow_dispatch:
     inputs:
       force_build:
@@ -21,11 +20,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-
-    env:
-      # Use workflow input on manual runs; default to amd64+arm64 otherwise
-      PLATFORMS: ${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'linux/amd64,linux/arm64' }}
-      SHOULD_BUILD: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && fromJSON(inputs.force_build)) }}
 
     steps:
       - name: Checkout fork
@@ -58,8 +52,7 @@ jobs:
         run: |
           echo "Merging upstream/main into feature/native-scale-support"
           git merge upstream/main --no-edit || {
-            echo "Merge conflict detected!"
-            echo "::warning::Manual intervention required - merge conflicts with upstream"
+            echo "::warning::Merge conflict with upstream"
             exit 1
           }
 
@@ -67,17 +60,17 @@ jobs:
         if: ${{ steps.check_changes.outputs.behind > 0 }}
         run: git push origin feature/native-scale-support
 
-      # NEW: QEMU is required for reliable linux/arm64 under emulation
+      # Enable multi-arch reliably
       - name: Set up QEMU
-        if: ${{ env.SHOULD_BUILD == 'true' }}
+        if: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        if: ${{ env.SHOULD_BUILD == 'true' }}
+        if: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GitHub Container Registry
-        if: ${{ env.SHOULD_BUILD == 'true' }}
+      - name: Login to GHCR
+        if: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -85,12 +78,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        if: ${{ env.SHOULD_BUILD == 'true' }}
+        if: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./docker/Dockerfile
-          platforms: ${{ env.PLATFORMS }}
+          platforms: ${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'linux/amd64,linux/arm64' }}
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/ersatztv:scale-support
@@ -99,11 +92,10 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Summary
-        if: ${{ env.SHOULD_BUILD == 'true' }}
+        if: ${{ steps.check_changes.outputs.behind > 0 || (github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         run: |
-          echo "✅ Successfully synced with upstream and rebuilt Docker image" >> $GITHUB_STEP_SUMMARY
-          echo "📦 Image: ghcr.io/${{ github.repository_owner }}/ersatztv:scale-support" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Pushed: ghcr.io/${{ github.repository_owner }}/ersatztv:scale-support" >> $GITHUB_STEP_SUMMARY
 
       - name: No changes
-        if: ${{ env.SHOULD_BUILD != 'true' }}
+        if: ${{ !(steps.check_changes.outputs.behind > 0) && !(github.event_name == 'workflow_dispatch' && inputs.force_build == 'true') }}
         run: echo "✅ Already up to date with upstream" >> $GITHUB_STEP_SUMMARY
