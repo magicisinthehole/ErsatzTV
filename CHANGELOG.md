@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Show playout warnings count badge in left menu
+
 ### Fixed
 - Fix HLS Direct playback with Jellyfin 10.11
 - Fix remote stream scripts (parsing issue with spaces and quotes)
@@ -13,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix UI crash when editing block playout that has default deco
 - Fix playback failure when seeking content with certain DTS audio (e.g. DTS-HD MA)
 - Properly set explicit audio decoder on combined audio and video input file
+- Fix building sequential schedules across a UTC offset change
 
 ## [25.8.0] - 2025-10-26
 ### Added
