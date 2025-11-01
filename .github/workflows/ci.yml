@@ -6,6 +6,11 @@ on:
     branches:
       - main
 
+# Ensure GITHUB_TOKEN can write to Packages
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   calculate_version:
     name: Calculate version information
@@ -47,7 +52,7 @@ jobs:
       ac_password: ${{ secrets.AC_PASSWORD }}
       gh_token: ${{ secrets.GITHUB_TOKEN }}
 
-  # Docker Hub build (gate to upstream; avoids missing-secret failures in fork)
+  # Docker Hub build (gate to upstream to avoid missing-secret failures in fork)
   build_images:
     if: ${{ github.repository == 'ErsatzTV/ErsatzTV' }}
     uses: ersatztv/ersatztv/.github/workflows/docker.yml@main
@@ -65,9 +70,6 @@ jobs:
     name: Build & push (GHCR)
     needs: calculate_version
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
