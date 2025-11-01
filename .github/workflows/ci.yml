@@ -31,9 +31,9 @@ jobs:
           echo "artifacts_version=${tag}-${short}" >> "$GITHUB_OUTPUT"
           echo "info_version=${tag_no_v}" >> "$GITHUB_OUTPUT"
 
-  # Upstream-only artifacts (requires Apple signing secrets). Skip in your fork.
+  # Upstream-only artifacts (requires Apple signing). Skip in fork.
   build_and_upload:
-    if: ${{ github.repository == 'ErsatzTV/ErsatzTV' && secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+    if: ${{ github.repository == 'ErsatzTV/ErsatzTV' }}
     uses: ersatztv/ersatztv/.github/workflows/artifacts.yml@main
     needs: calculate_version
     with:
@@ -47,9 +47,9 @@ jobs:
       ac_password: ${{ secrets.AC_PASSWORD }}
       gh_token: ${{ secrets.GITHUB_TOKEN }}
 
-  # Docker Hub build (only runs if Docker Hub secrets exist).
+  # Docker Hub build (gate to upstream; avoids missing-secret failures in fork)
   build_images:
-    if: ${{ secrets.DOCKER_HUB_USERNAME && secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    if: ${{ github.repository == 'ErsatzTV/ErsatzTV' }}
     uses: ersatztv/ersatztv/.github/workflows/docker.yml@main
     needs: calculate_version
     with:
@@ -60,7 +60,7 @@ jobs:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_access_token: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  # ✅ GHCR build/push — this publishes the tag your compose pulls.
+  # ✅ GHCR build/push — publishes the tag your compose pulls.
   build_images_ghcr:
     name: Build & push (GHCR)
     needs: calculate_version
