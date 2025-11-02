@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Show playout warnings count badge in left menu
+- Graphics Engine:
+  - Add `MediaItem_Resolution` template data (the current `Resolution` variable is the FFmpeg Profile resolution)
+  - Add `MediaItem_Start` template data (DateTimeOffset)
+  - Add `MediaItem_Stop` template data (DateTimeOffset)
+- Time shift on-demand playouts every hour to prevent XMLTV from appearing empty
 
 ### Fixed
 - Fix HLS Direct playback with Jellyfin 10.11
@@ -17,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix playback failure when seeking content with certain DTS audio (e.g. DTS-HD MA)
 - Properly set explicit audio decoder on combined audio and video input file
 - Fix building sequential schedules across a UTC offset change
+- Fix block start time calculation across a UTC offset change
 
 ## [25.8.0] - 2025-10-26
 ### Added
