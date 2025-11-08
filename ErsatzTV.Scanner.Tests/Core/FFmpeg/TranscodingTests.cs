@@ -282,6 +282,7 @@ public class TranscodingTests
             Substitute.For<IConfigElementRepository>(),
             graphicsElementLoader,
             MemoryCache,
+            Substitute.For<IMpegTsScriptService>(),
             LoggerFactory.CreateLogger<FFmpegLibraryProcessService>());
 
         var songVideoGenerator = new SongVideoGenerator(tempFilePool, mockImageCache, service);
@@ -351,6 +352,7 @@ public class TranscodingTests
             metadataRepository,
             new LocalFileSystem(Substitute.For<IClient>(), LoggerFactory.CreateLogger<LocalFileSystem>()),
             Substitute.For<IClient>(),
+            Substitute.For<IHardwareCapabilitiesFactory>(),
             LoggerFactory.CreateLogger<LocalStatisticsProvider>());
 
         await localStatisticsProvider.RefreshStatistics(ExecutableName("ffmpeg"), ExecutableName("ffprobe"), song);
@@ -499,6 +501,7 @@ public class TranscodingTests
             metadataRepository,
             new LocalFileSystem(Substitute.For<IClient>(), LoggerFactory.CreateLogger<LocalFileSystem>()),
             Substitute.For<IClient>(),
+            Substitute.For<IHardwareCapabilitiesFactory>(),
             LoggerFactory.CreateLogger<LocalStatisticsProvider>());
 
         await localStatisticsProvider.RefreshStatistics(
@@ -986,6 +989,7 @@ public class TranscodingTests
             Substitute.For<IConfigElementRepository>(),
             graphicsElementLoader,
             MemoryCache,
+            Substitute.For<IMpegTsScriptService>(),
             LoggerFactory.CreateLogger<FFmpegLibraryProcessService>());
 
         return service;
