@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - There are two requirements for AviSynth Scripts to work:
     - FFmpeg needs to be compiled with AviSynth support (not currently available in Docker)
     - AviSynth itself needs to be installed
+- Add `Troubleshoot` button to classic schedule list
+  - This generates JSON representing the entire schedule which can be shared when requested for troubleshooting
 
 ### Fixed
 - Fix HLS Direct playback with Jellyfin 10.11
@@ -50,6 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix saving subtitle title changes to the database
   - This fixes e.g. where stream selection would continue to use the original title
   - This fix applies to all libraries (local and media server)
+- Fix (3 year old) bug removing tags from local libraries when they are removed from NFO files (all content types)
+  - New scans will properly remove old tags; NFO files may need to be touched to force updating during a scan
 
 ### Changed
 - Use smaller batch size for search index updates (100, down from 1000)
