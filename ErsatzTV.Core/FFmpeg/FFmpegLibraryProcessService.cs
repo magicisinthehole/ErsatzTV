@@ -30,6 +30,7 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
     private readonly IMpegTsScriptService _mpegTsScriptService;
     private readonly ILocalStatisticsProvider _localStatisticsProvider;
     private readonly IMediaItemRepository _mediaItemRepository;
+    private readonly ILocalFileSystem _localFileSystem;
     private readonly ICustomStreamSelector _customStreamSelector;
     private readonly FFmpegProcessService _ffmpegProcessService;
     private readonly IFFmpegStreamSelector _ffmpegStreamSelector;
@@ -49,6 +50,7 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
         IMpegTsScriptService mpegTsScriptService,
         ILocalStatisticsProvider localStatisticsProvider,
         IMediaItemRepository mediaItemRepository,
+        ILocalFileSystem localFileSystem,
         ILogger<FFmpegLibraryProcessService> logger)
     {
         _ffmpegProcessService = ffmpegProcessService;
@@ -62,6 +64,7 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
         _mpegTsScriptService = mpegTsScriptService;
         _localStatisticsProvider = localStatisticsProvider;
         _mediaItemRepository = mediaItemRepository;
+        _localFileSystem = localFileSystem;
         _logger = logger;
     }
 
@@ -544,7 +547,7 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
 
             context = await _graphicsElementLoader.LoadAll(context, graphicsElements, cancellationToken);
 
-            if (context.Elements.Count > 0)
+            if (context?.Elements?.Count > 0)
             {
                 graphicsEngineInput = new GraphicsEngineInput();
                 graphicsEngineContext = context;
@@ -772,11 +775,9 @@ public class FFmpegLibraryProcessService : IFFmpegProcessService
             }
         }
 
-        string videoPath = Path.Combine(FileSystemLayout.ResourcesCacheFolder, "background.png");
-        if (!File.Exists(videoPath))
-        {
-            videoPath = Path.Combine(FileSystemLayout.ResourcesCacheFolder, "_background.png");
-        }
+        string videoPath = _localFileSystem.GetCustomOrDefaultFile(
+            FileSystemLayout.ResourcesCacheFolder,
+            "background.png");
 
         var videoVersion = BackgroundImageMediaVersion.ForPath(videoPath, desiredResolution);
 
