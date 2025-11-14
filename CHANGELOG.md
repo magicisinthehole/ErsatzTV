@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ScaledResolution` template data (the final size of the frame before padding)
   - Add `place_within_source_content` (true/false) field to image graphics element
   - Add `name` field to all graphics elements to display in the UI
-- Classic schedules: add collection type `Search Query`
+- Classic and block schedules: add collection type `Search Query`
   - This allows defining search queries directly on schedule items without creating smart collections beforehand
   - As an example, this can be used to filter or combine existing smart collections
     - Filter: `smart_collection:"sd movies" AND plot:"christmas"`
@@ -51,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add channel troubleshooting button to channels list
   - This will open the playback troubleshooting tool in "channel" mode
   - This mode requires entering a date and time, and will play up to 30 seconds of *one item from that channel's playout* starting at the entered date and time
+- Block schedules: add copy template button to templates table
 
 ### Fixed
 - Fix HLS Direct playback with Jellyfin 10.11
@@ -77,11 +78,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix bug where looping motion graphics wouldn't be displayed when seeking into second half of content
 - Fix `content_total_duration` value in graphics engine opacity expressions
   - This bug caused some graphics elements to display too early after first joining a channel
+- Optimize database calls made for search index rebuilds and updates
+  - This should improve performance of library scans
 
 ### Changed
 - Use smaller batch size for search index updates (100, down from 1000)
   - This should help newly scanned items appear in the UI more quickly
 - Replace favicon and logo in background image used for error streams
+- Block schedules:
+  - Auto scroll day view to block item time when adding and removing block items from template
+  - Allow keyboard selection of
+    - Block groups in block list
+    - Template groups in template list
+    - Block groups and blocks in template editor
+  - Replace template tree view with searchable table (like blocks)
 
 ## [25.8.0] - 2025-10-26
 ### Added
