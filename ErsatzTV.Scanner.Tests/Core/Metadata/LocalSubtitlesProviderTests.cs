@@ -1,12 +1,16 @@
 ﻿using System.Globalization;
+using Bugsnag;
 using ErsatzTV.Core.Domain;
 using ErsatzTV.Core.Interfaces.Repositories;
+using ErsatzTV.Core.Metadata;
 using ErsatzTV.Scanner.Core.Metadata;
 using ErsatzTV.Scanner.Tests.Core.Fakes;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
+using Testably.Abstractions.Testing;
+using Testably.Abstractions.Testing.Initializer;
 
 namespace ErsatzTV.Scanner.Tests.Core.Metadata;
 
@@ -23,6 +27,8 @@ public class LocalSubtitlesProviderTests
     //       Avatar (2009).en.sdh.srt
     //       Avatar (2009).de.srt
     //       Avatar (2009).de.sdh.forced.srt
+
+    private readonly string _prefix = OperatingSystem.IsWindows() ? "C:\\" : "/";
 
     [Test]
     public void Should_Find_All_Languages_Codecs_And_Flags_With_Full_Paths()
@@ -46,10 +52,17 @@ public class LocalSubtitlesProviderTests
             new(@"/Movies/Avatar (2009)/Avatar (2009).DE.SDH.FORCED.SRT")
         };
 
+        var fileSystem = new MockFileSystem();
+        IFileSystemInitializer<MockFileSystem> init = fileSystem.Initialize();
+        foreach (var file in fakeFiles)
+        {
+            init.WithFile(file.Path);
+        }
+
         var provider = new LocalSubtitlesProvider(
             Substitute.For<IMediaItemRepository>(),
             Substitute.For<IMetadataRepository>(),
-            new FakeLocalFileSystem(fakeFiles),
+            new LocalFileSystem(fileSystem, Substitute.For<IClient>(), Substitute.For<ILogger<LocalFileSystem>>()),
             Substitute.For<ILogger<LocalSubtitlesProvider>>());
 
         List<Subtitle> result = provider.LocateExternalSubtitles(
@@ -64,7 +77,9 @@ public class LocalSubtitlesProviderTests
         result.Count(s => s.SDH).ShouldBe(2);
         result.Count(s => s.Codec == "subrip").ShouldBe(4);
         result.Count(s => s.Codec == "ass").ShouldBe(1);
-        result.All(s => s.Path.Contains(@"/Movies/Avatar (2009)/")).ShouldBeTrue();
+
+        string path = Path.Combine(_prefix, "Movies", "Avatar (2009)");
+        result.All(s => s.Path.Contains(path)).ShouldBeTrue();
     }
 
     [Test]
@@ -91,10 +106,17 @@ public class LocalSubtitlesProviderTests
             new(@"/Movies/Avatar (2009)/Avatar (2009).DE.SDH.FORCED.SRT")
         };
 
+        var fileSystem = new MockFileSystem();
+        IFileSystemInitializer<MockFileSystem> init = fileSystem.Initialize();
+        foreach (var file in fakeFiles)
+        {
+            init.WithFile(file.Path);
+        }
+
         var provider = new LocalSubtitlesProvider(
             Substitute.For<IMediaItemRepository>(),
             Substitute.For<IMetadataRepository>(),
-            new FakeLocalFileSystem(fakeFiles),
+            new LocalFileSystem(fileSystem, Substitute.For<IClient>(), Substitute.For<ILogger<LocalFileSystem>>()),
             Substitute.For<ILogger<LocalSubtitlesProvider>>());
 
         List<Subtitle> result = provider.LocateExternalSubtitles(
@@ -109,6 +131,8 @@ public class LocalSubtitlesProviderTests
         result.Count(s => s.SDH).ShouldBe(3);
         result.Count(s => s.Codec == "subrip").ShouldBe(5);
         result.Count(s => s.Codec == "ass").ShouldBe(2);
-        result.Count(s => s.Path.Contains(@"/Movies/Avatar (2009)/")).ShouldBe(0);
+
+        string path = Path.Combine(_prefix, "Movies", "Avatar (2009)");
+        result.Count(s => s.Path.Contains(path)).ShouldBe(0);
     }
 }
